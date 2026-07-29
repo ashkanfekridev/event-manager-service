@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@yield('title', 'رویدادینو')</title>
+    <style>
+        :root{--ink:#17202a;--muted:#667085;--brand:#7c3aed;--brand2:#ec4899;--bg:#f7f5ff;--card:#fff;--line:#e8e3f3;--ok:#087f5b;--danger:#c92a2a;--warning:#b45309}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Tahoma,Arial,sans-serif;line-height:1.7}a{color:inherit;text-decoration:none}.container{width:min(1120px,calc(100% - 32px));margin:auto}.nav{background:#171126;color:#fff;padding:14px 0;position:sticky;top:0;z-index:10}.nav .container{display:flex;align-items:center;justify-content:space-between}.brand{font-size:21px;font-weight:800}.nav-links{display:flex;gap:10px}.nav-links a{padding:7px 12px;border-radius:9px}.nav-links a:hover{background:#ffffff18}.hero{padding:55px 0 34px;background:linear-gradient(135deg,#21133b,#7c3aed 65%,#ec4899);color:#fff}.hero h1{font-size:clamp(28px,5vw,52px);margin:0 0 8px}.hero p{margin:0;color:#eee2ff}.content{padding:32px 0 60px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 8px 24px #4320800b}.card h2,.card h3{margin-top:0}.muted{color:var(--muted)}.badge{display:inline-block;padding:3px 9px;border-radius:99px;background:#ede9fe;color:#5b21b6;font-size:13px}.badge.published{background:#d1fae5;color:#047857}.badge.scheduled{background:#fef3c7;color:#92400e}.badge.draft{background:#f1f5f9;color:#475569}.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:10px;padding:10px 16px;background:var(--brand);color:#fff;cursor:pointer;font:inherit}.btn.small{padding:6px 10px;font-size:13px}.btn.secondary{background:#efeafd;color:#5b21b6}.btn.success{background:var(--ok)}.btn.danger{background:var(--danger)}.btn:disabled{opacity:.5;cursor:not-allowed}.button-row{display:flex;flex-wrap:wrap;gap:8px}.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}.field{display:flex;flex-direction:column;gap:5px}.field>span{font-size:14px;font-weight:700}.field.full{grid-column:1/-1}input,select,textarea{width:100%;border:1px solid #d8d0e7;border-radius:9px;padding:10px;background:#fff;font:inherit}input:focus,select:focus,textarea:focus{outline:3px solid #7c3aed18;border-color:var(--brand)}textarea{min-height:100px}.alert{border-radius:10px;padding:12px 15px;margin-bottom:18px;background:#d3f9d8;color:#166534}.alert.error{background:#ffe3e3;color:#9b1c1c}.table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse}.table th,.table td{text-align:right;padding:12px;border-bottom:1px solid var(--line);white-space:nowrap}.table th{font-size:13px;color:var(--muted);background:#faf9fd}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.stat strong{display:block;font-size:28px;color:var(--brand)}.seat-map{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0}.seat{border:1px solid #c9bde1;background:#fff;border-radius:8px;padding:7px 10px;cursor:pointer}.seat.selected{background:var(--brand);color:#fff}.seat:disabled{background:#eee;color:#999;cursor:not-allowed}.screen{text-align:center;background:#2d2640;color:#fff;border-radius:50% 50% 8px 8px;padding:7px;margin:12px auto 25px;max-width:420px}.section-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}.admin-shell{min-height:100vh;display:grid;grid-template-columns:260px 1fr}.admin-sidebar{position:sticky;top:0;height:100vh;background:#181126;color:#fff;padding:24px 16px}.admin-sidebar .brand{display:block;padding:0 12px 25px}.admin-sidebar small{display:block;color:#a99fbd;padding:10px 12px}.admin-menu{display:grid;gap:5px}.admin-menu a{padding:10px 12px;border-radius:10px;color:#ddd5ec}.admin-menu a:hover,.admin-menu a.active{background:#7c3aed;color:#fff}.admin-main{min-width:0}.admin-topbar{height:72px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px}.admin-profile{display:flex;align-items:center;gap:10px}.avatar{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:#ede9fe;color:#6d28d9;font-weight:800}.admin-content{padding:28px;max-width:1400px}.filter-bar{display:flex;flex-wrap:wrap;gap:10px}.filter-bar input{min-width:240px}.filter-bar select{width:auto;min-width:140px}.publication-options{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.publication-option{border:1px solid var(--line);padding:12px;border-radius:10px}.publication-option input{width:auto}.page-subtitle{margin-top:-12px;color:var(--muted)}@media(max-width:850px){.admin-shell{display:block}.admin-sidebar{position:static;height:auto}.admin-menu{grid-template-columns:repeat(3,1fr)}.admin-sidebar small{display:none}.admin-topbar{padding:0 16px}.admin-content{padding:18px}.stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr)}.nav .container{align-items:flex-start;gap:8px}.nav-links{font-size:13px}.table{font-size:13px}.publication-options{grid-template-columns:1fr}.admin-menu{grid-template-columns:1fr 1fr}.section-title{align-items:flex-start;flex-direction:column}}
+    </style>
+</head>
+<body>
+@if(request()->routeIs('admin.*'))
+<div class="admin-shell">
+    <aside class="admin-sidebar">
+        <a class="brand" href="{{ route('admin.dashboard') }}">رویدادینو <span class="muted" style="font-size:12px">مدیریت</span></a>
+        <small>منوی اصلی</small>
+        <nav class="admin-menu">
+            <a class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">▦ داشبورد</a>
+            <a class="{{ request()->routeIs('admin.events.*') || request()->routeIs('admin.performances.*') ? 'active' : '' }}" href="{{ route('admin.events.index') }}">◈ رویدادها</a>
+            <a class="{{ request()->routeIs('admin.venues.*') || request()->routeIs('admin.halls.*') || request()->routeIs('admin.seats.*') ? 'active' : '' }}" href="{{ route('admin.venues.index') }}">▤ سالن‌ها</a>
+            <a href="{{ route('events.index') }}" target="_blank">↗ مشاهده سایت</a>
+        </nav>
+    </aside>
+    <div class="admin-main">
+        <header class="admin-topbar"><div class="muted">@yield('title', 'پنل مدیریت')</div><div class="admin-profile"><div><strong>مدیر سیستم</strong><small class="muted" style="display:block">Administrator</small></div><span class="avatar">م</span></div></header>
+        <main class="admin-content">
+            @if(session('success'))<div class="alert">{{ session('success') }}</div>@endif
+            @if($errors->any())<div class="alert error"><ul>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>@endif
+            @yield('content')
+        </main>
+    </div>
+</div>
+@else
+<nav class="nav"><div class="container"><a class="brand" href="{{ route('events.index') }}">رویدادینو</a><div class="nav-links"><a href="{{ route('events.index') }}">رویدادها</a><a href="{{ route('admin.dashboard') }}">پنل مدیریت</a></div></div></nav>
+@hasSection('hero')<section class="hero"><div class="container">@yield('hero')</div></section>@endif
+<main class="content"><div class="container">
+    @if(session('success'))<div class="alert">{{ session('success') }}</div>@endif
+    @if($errors->any())<div class="alert error"><ul>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>@endif
+    @yield('content')
+</div></main>
+@endif
+@stack('scripts')
+</body>
+</html>
