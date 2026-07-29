@@ -3,6 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    entrypoint: ["sh", "/var/www/html/docker/entrypoint.sh"]
     command: php artisan serve --host=0.0.0.0 --port=8000 --no-reload
     ports:
       - "${APP_PORT:-8000}:8000"
