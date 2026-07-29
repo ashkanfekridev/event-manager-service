@@ -60,13 +60,25 @@ test('a customer can reserve available seats and confirm the order', function ()
         'customer_phone' => '09121111111',
     ])->assertUnprocessable();
 
-    $this->postJson("/api/v1/orders/{$reference}/confirm")
+    $confirmation = $this->postJson("/api/v1/orders/{$reference}/confirm")
         ->assertOk()
         ->assertJsonPath('data.status', 'paid')
         ->assertJsonPath('data.items.0.seat.code', 'main-A-1');
 
     $this->assertDatabaseHas('performance_seats', ['id' => $performanceSeat->id, 'status' => 'sold']);
     $this->assertDatabaseCount('tickets', 1);
+
+    $this->get($confirmation->json('data.ticket_url'))
+        ->assertOk()
+        ->assertSee('خرید شما با موفقیت انجام شد')
+        ->assertSee('main-A-1');
+
+    $this->get(route('admin.orders.index'))->assertOk()->assertSee('Ali Ahmadi')->assertSee('09120000000');
+    $this->get(route('admin.orders.show', $reference))->assertOk()->assertSee('ali@example.com');
+
+    $lookup = $this->post(route('tickets.lookup'), ['reference' => $reference, 'email' => 'ali@example.com']);
+    $lookup->assertRedirect();
+    $this->get($lookup->headers->get('Location'))->assertOk()->assertSee('main-A-1');
 });
 
 test('reservation response explains when ticket sales will open', function () {
@@ -87,6 +99,7 @@ test('customers can browse published events', function () {
 
     $this->get(route('events.index'))->assertOk()->assertSee('Hamlet');
     $this->get(route('events.show', $event))->assertOk()->assertSee($performance->starts_at->format('Y/m/d'));
+    $this->get(route('checkout.show', $performance))->assertOk()->assertSee('اطلاعات خریدار');
 });
 
 test('an admin can edit and immediately toggle event publication', function () {

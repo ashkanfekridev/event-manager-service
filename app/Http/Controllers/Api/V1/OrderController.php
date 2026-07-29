@@ -13,7 +13,7 @@ class OrderController extends Controller
 {
     public function show(Order $order): OrderResource
     {
-        return new OrderResource($order->load('items.performanceSeat.seat', 'items.ticket'));
+        return new OrderResource($order->load('items.performanceSeat.seat', 'items.performanceSeat.performance.event', 'items.ticket'));
     }
 
     public function confirm(Order $order): OrderResource|JsonResponse
@@ -48,7 +48,7 @@ class OrderController extends Controller
             return response()->json(['message' => 'The reservation has expired or cannot be paid.'], 409);
         }
 
-        return new OrderResource($order->load('items.performanceSeat.seat', 'items.ticket'));
+        return new OrderResource($order->load('items.performanceSeat.seat', 'items.performanceSeat.performance.event', 'items.ticket'));
     }
 
     public function cancel(Order $order): JsonResponse

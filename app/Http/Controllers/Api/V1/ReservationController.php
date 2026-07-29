@@ -56,7 +56,7 @@ class ReservationController extends Controller
             return $order;
         });
 
-        return new OrderResource($order->load('items.performanceSeat.seat'));
+        return new OrderResource($order->load('items.performanceSeat.seat', 'items.performanceSeat.performance.event'));
     }
 
     private function ensureSalesAreOpen(Performance $performance): void

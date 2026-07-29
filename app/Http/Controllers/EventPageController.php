@@ -22,7 +22,11 @@ class EventPageController extends Controller
     public function show(Event $event): View
     {
         abort_unless($event->isPublished(), 404);
-        $event->load(['performances' => fn ($query) => $query->where('starts_at', '>', now())->with(['hall.venue', 'seats.seat'])->orderBy('starts_at')]);
+        $event->load(['performances' => fn ($query) => $query
+            ->where('starts_at', '>', now())
+            ->with('hall.venue')
+            ->withCount(['seats as available_seats_count' => fn ($query) => $query->where('status', 'available')])
+            ->orderBy('starts_at')]);
 
         return view('events.show', compact('event'));
     }
