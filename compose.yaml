@@ -3,12 +3,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    command: php artisan serve --host=0.0.0.0 --port=8000 --no-reload
     ports:
       - "${APP_PORT:-8000}:8000"
     environment:
       APP_ENV: local
       APP_DEBUG: "true"
       APP_URL: "http://localhost:${APP_PORT:-8000}"
+      APP_TIMEZONE: "${APP_TIMEZONE:-Asia/Tehran}"
       DB_CONNECTION: mysql
       DB_HOST: mysql
       DB_PORT: 3306
@@ -21,19 +23,6 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-    restart: unless-stopped
-
-  vite:
-    image: node:24-alpine
-    working_dir: /var/www/html
-    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
-    ports:
-      - "${VITE_PORT:-5173}:5173"
-    environment:
-      VITE_APP_NAME: "${APP_NAME:-Event Manager}"
-    volumes:
-      - .:/var/www/html
-      - node_modules_data:/var/www/html/node_modules
     restart: unless-stopped
 
   mysql:
@@ -71,4 +60,3 @@ services:
 volumes:
   mysql_data:
   vendor_data:
-  node_modules_data:
