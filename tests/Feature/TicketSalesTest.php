@@ -1,39 +1,106 @@
 <?php
 
+use App\Filament\Resources\Events\Pages\EditEvent;
+use App\Filament\Resources\Events\Pages\ListEvents;
+use App\Filament\Resources\Halls\Pages\EditHall;
+use App\Filament\Resources\Halls\RelationManagers\SeatsRelationManager;
+use App\Filament\Resources\Performances\Pages\CreatePerformance;
 use App\Models\Event;
 use App\Models\Hall;
 use App\Models\Performance;
 use App\Models\PerformanceSeat;
 use App\Models\Seat;
+use App\Models\User;
 use App\Models\Venue;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
 test('an admin can define a hall layout and create an event performance', function () {
+    $this->actingAs(User::factory()->admin()->create());
+
     $venue = Venue::factory()->create();
+    $hall = Hall::factory()->for($venue)->create(['name' => 'Main Hall']);
 
-    $this->post(route('admin.halls.store', $venue), ['name' => 'Main Hall'])
-        ->assertRedirect();
-
-    $hall = Hall::query()->firstOrFail();
-    $this->post(route('admin.seats.store', $hall), [
+    Livewire::test(SeatsRelationManager::class, [
+        'ownerRecord' => $hall,
+        'pageClass' => EditHall::class,
+    ])->callAction(TestAction::make('generateLayout')->table(), [
         'section' => 'main',
         'rows' => 2,
         'seats_per_row' => 3,
+        'aisles_after' => '2',
         'type' => 'standard',
-    ])->assertRedirect();
+    ])->assertHasNoActionErrors();
 
     expect($hall->fresh()->capacity)->toBe(6);
 
-    $event = Event::factory()->create();
-    $this->post(route('admin.performances.store', $event), [
-        'hall_id' => $hall->id,
-        'starts_at' => now()->addWeek()->format('Y-m-d H:i:s'),
-        'default_price' => 500000,
-    ])->assertRedirect();
+    expect($hall->seats()->where('row_label', 'A')->where('number', '2')->firstOrFail()->aisle_after)->toBeTrue();
 
-    expect($event->performances()->firstOrFail()->seats()->count())->toBe(6);
+    Livewire::test(SeatsRelationManager::class, [
+        'ownerRecord' => $hall,
+        'pageClass' => EditHall::class,
+    ])->callAction(TestAction::make('configureAisles')->table(), [
+        'section' => 'main',
+        'aisles_after' => '1',
+    ])->assertHasNoActionErrors();
+
+    expect($hall->seats()->where('row_label', 'A')->where('number', '1')->firstOrFail()->aisle_after)->toBeTrue()
+        ->and($hall->seats()->where('row_label', 'A')->where('number', '2')->firstOrFail()->aisle_after)->toBeFalse();
+
+    $event = Event::factory()->create();
+
+    Livewire::test(CreatePerformance::class)
+        ->fillForm([
+            'event_id' => $event->id,
+            'hall_id' => $hall->id,
+            'starts_at' => now()->addWeek(),
+            'sales_start_at' => now(),
+            'sales_end_at' => now()->addDays(6),
+            'status' => 'scheduled',
+            'default_price' => 500000,
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors()
+        ->assertRedirect();
+
+    expect($event->performances()->firstOrFail()->seats()->count())->toBe(6)
+        ->and($event->performances()->firstOrFail()->seats()->firstOrFail()->price)->toBe('500000.00');
+});
+
+test('only administrators can access the Filament panel', function () {
+    $this->get(route('filament.admin.pages.dashboard'))
+        ->assertRedirect(route('filament.admin.auth.login'));
+
+    $this->actingAs(User::factory()->create())
+        ->get(route('filament.admin.pages.dashboard'))
+        ->assertForbidden();
+
+    $this->actingAs(User::factory()->admin()->create())
+        ->get(route('filament.admin.pages.dashboard'))
+        ->assertOk();
+});
+
+test('an administrator can edit their Filament profile', function () {
+    $this->actingAs(User::factory()->admin()->create())
+        ->get(route('filament.admin.auth.profile'))
+        ->assertOk();
+});
+
+test('an administrator can open every Filament management section', function () {
+    $this->actingAs(User::factory()->admin()->create());
+
+    foreach ([
+        'filament.admin.resources.events.index',
+        'filament.admin.resources.performances.index',
+        'filament.admin.resources.venues.index',
+        'filament.admin.resources.halls.index',
+        'filament.admin.resources.orders.index',
+    ] as $routeName) {
+        $this->get(route($routeName))->assertOk();
+    }
 });
 
 test('a customer can reserve available seats and confirm the order', function () {
@@ -73,8 +140,9 @@ test('a customer can reserve available seats and confirm the order', function ()
         ->assertSee('خرید شما با موفقیت انجام شد')
         ->assertSee('main-A-1');
 
-    $this->get(route('admin.orders.index'))->assertOk()->assertSee('Ali Ahmadi')->assertSee('09120000000');
-    $this->get(route('admin.orders.show', $reference))->assertOk()->assertSee('ali@example.com');
+    $this->actingAs(User::factory()->admin()->create());
+    $this->get(route('filament.admin.resources.orders.index'))->assertOk()->assertSee('Ali Ahmadi')->assertSee('09120000000');
+    $this->get(route('filament.admin.resources.orders.view', $reference))->assertOk()->assertSee('ali@example.com');
 
     $lookup = $this->post(route('tickets.lookup'), ['reference' => $reference, 'email' => 'ali@example.com']);
     $lookup->assertRedirect();
@@ -102,26 +170,59 @@ test('customers can browse published events', function () {
     $this->get(route('checkout.show', $performance))->assertOk()->assertSee('اطلاعات خریدار');
 });
 
+test('customers can switch hall sections and see seats arranged by row with aisles', function () {
+    $hall = Hall::factory()->create();
+    $event = Event::factory()->create();
+    $performance = Performance::factory()->for($event)->for($hall)->create();
+
+    $mainSeat = Seat::factory()->for($hall)->create([
+        'section' => 'همکف',
+        'row_label' => 'A',
+        'number' => '1',
+        'code' => 'main-A-1',
+        'aisle_after' => true,
+    ]);
+    $vipSeat = Seat::factory()->for($hall)->create([
+        'section' => 'VIP',
+        'row_label' => 'B',
+        'number' => '1',
+        'code' => 'vip-B-1',
+    ]);
+
+    PerformanceSeat::factory()->for($performance)->for($mainSeat)->create();
+    PerformanceSeat::factory()->for($performance)->for($vipSeat)->create();
+
+    $this->get(route('checkout.show', $performance))
+        ->assertOk()
+        ->assertSee('data-section-target="همکف"', false)
+        ->assertSee('data-section-target="VIP"', false)
+        ->assertSee('ردیف A')
+        ->assertSee('ردیف B')
+        ->assertSee('aisle-after', false);
+});
+
 test('an admin can edit and immediately toggle event publication', function () {
+    $this->actingAs(User::factory()->admin()->create());
+
     $event = Event::factory()->create(['published_at' => null]);
     Performance::factory()->for($event)->create();
 
     $this->get(route('events.show', $event))->assertNotFound();
-    $this->get(route('admin.events.edit', $event))->assertOk()->assertSee('نحوه انتشار');
 
-    $this->put(route('admin.events.update', $event), [
-        'title' => 'Edited Concert',
-        'slug' => $event->slug,
-        'type' => 'concert',
-        'publication_mode' => 'draft',
-    ])->assertRedirect(route('admin.events.show', $event));
+    Livewire::test(EditEvent::class, ['record' => $event->getRouteKey()])
+        ->fillForm(['title' => 'Edited Concert', 'published_at' => null])
+        ->call('save')
+        ->assertHasNoFormErrors();
 
-    $this->patch(route('admin.events.publication.toggle', $event))->assertRedirect();
+    Livewire::test(ListEvents::class)
+        ->callAction(TestAction::make('togglePublication')->table($event));
 
     expect($event->fresh()->isPublished())->toBeTrue();
     $this->get(route('events.show', $event))->assertOk()->assertSee('Edited Concert');
 
-    $this->patch(route('admin.events.publication.toggle', $event))->assertRedirect();
+    Livewire::test(ListEvents::class)
+        ->callAction(TestAction::make('togglePublication')->table($event));
+
     expect($event->fresh()->published_at)->toBeNull();
 });
 
