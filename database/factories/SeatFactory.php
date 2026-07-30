@@ -26,6 +26,7 @@ class SeatFactory extends Factory
             'code' => fake()->unique()->bothify('main-?-##'),
             'type' => 'standard',
             'is_active' => true,
+            'aisle_after' => false,
         ];
     }
 }
