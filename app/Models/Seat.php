@@ -9,15 +9,24 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['hall_id', 'section', 'row_label', 'number', 'code', 'type', 'is_active'])]
+#[Fillable(['hall_id', 'section', 'row_label', 'number', 'code', 'type', 'is_active', 'aisle_after'])]
 class Seat extends Model
 {
     /** @use HasFactory<SeatFactory> */
     use HasFactory;
 
+    protected static function booted(): void
+    {
+        static::saved(fn (Seat $seat) => $seat->refreshHallCapacity());
+        static::deleted(fn (Seat $seat) => $seat->refreshHallCapacity());
+    }
+
     protected function casts(): array
     {
-        return ['is_active' => 'boolean'];
+        return [
+            'is_active' => 'boolean',
+            'aisle_after' => 'boolean',
+        ];
     }
 
     public function hall(): BelongsTo
@@ -28,5 +37,15 @@ class Seat extends Model
     public function performanceSeats(): HasMany
     {
         return $this->hasMany(PerformanceSeat::class);
+    }
+
+    private function refreshHallCapacity(): void
+    {
+        Hall::query()->whereKey($this->hall_id)->update([
+            'capacity' => self::query()
+                ->where('hall_id', $this->hall_id)
+                ->where('is_active', true)
+                ->count(),
+        ]);
     }
 }
