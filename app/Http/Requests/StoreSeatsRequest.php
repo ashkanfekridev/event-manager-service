@@ -29,6 +29,9 @@ class StoreSeatsRequest extends FormRequest
             'seats.*.number' => ['required', 'string', 'max:20'],
             'seats.*.code' => ['required', 'string', 'max:100', 'distinct'],
             'seats.*.type' => ['sometimes', 'string', 'in:standard,vip,wheelchair'],
+            'seats.*.aisle_after' => ['sometimes', 'boolean'],
+            'seats.*.aisle_after_row' => ['sometimes', 'boolean'],
+            'seats.*.default_price' => ['nullable', 'numeric', 'min:0', 'max:9999999999.99'],
         ];
     }
 }

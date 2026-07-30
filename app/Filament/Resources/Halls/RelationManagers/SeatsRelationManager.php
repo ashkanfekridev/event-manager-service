@@ -47,6 +47,8 @@ class SeatsRelationManager extends RelationManager
                     ->required(),
                 Toggle::make('is_active')->label('فعال')->default(true),
                 Toggle::make('aisle_after')->label('راهرو بعد از این صندلی')->default(false),
+                Toggle::make('aisle_after_row')->label('راهرو بعد از این ردیف')->default(false),
+                TextInput::make('default_price')->label('قیمت پایه')->numeric()->minValue(0)->maxValue(9999999999.99)->suffix('تومان'),
             ]);
     }
 
@@ -72,6 +74,8 @@ class SeatsRelationManager extends RelationManager
                     ->badge(),
                 TextColumn::make('is_active')->label('فعال')->formatStateUsing(fn (bool $state): string => $state ? 'بله' : 'خیر')->badge(),
                 TextColumn::make('aisle_after')->label('راهرو بعد از صندلی')->formatStateUsing(fn (bool $state): string => $state ? 'بله' : '—')->badge(),
+                TextColumn::make('aisle_after_row')->label('راهرو بعد از ردیف')->formatStateUsing(fn (bool $state): string => $state ? 'بله' : '—')->badge(),
+                TextColumn::make('default_price')->label('قیمت پایه')->numeric()->suffix(' تومان')->placeholder('قیمت سانس'),
             ])
             ->headerActions([
                 CreateAction::make(),
@@ -94,6 +98,12 @@ class SeatsRelationManager extends RelationManager
                             ])
                             ->default('standard')
                             ->required(),
+                        TextInput::make('default_price')
+                            ->label('قیمت پایه صندلی‌ها')
+                            ->numeric()
+                            ->minValue(0)
+                            ->maxValue(9999999999.99)
+                            ->suffix('تومان'),
                     ])
                     ->action(function (array $data): void {
                         /** @var Hall $hall */
@@ -118,6 +128,7 @@ class SeatsRelationManager extends RelationManager
                                                 'type' => $data['type'],
                                                 'is_active' => true,
                                                 'aisle_after' => $aisleNumbers->contains($number),
+                                                'default_price' => $data['default_price'] ?? null,
                                             ],
                                         );
                                     }

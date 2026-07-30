@@ -27,6 +27,8 @@ class SeatFactory extends Factory
             'type' => 'standard',
             'is_active' => true,
             'aisle_after' => false,
+            'aisle_after_row' => false,
+            'default_price' => null,
         ];
     }
 }

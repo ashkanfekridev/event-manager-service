@@ -31,7 +31,7 @@ class PerformanceController extends Controller
             $performance->seats()->createMany(
                 $hall->seats->map(fn ($seat): array => [
                     'seat_id' => $seat->id,
-                    'price' => $validated['default_price'],
+                    'price' => $seat->default_price ?? $validated['default_price'],
                 ])->all(),
             );
 

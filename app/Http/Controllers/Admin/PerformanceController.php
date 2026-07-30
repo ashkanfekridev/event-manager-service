@@ -29,7 +29,10 @@ class PerformanceController extends Controller
                 'sales_start_at' => $validated['sales_start_at'] ?? now(),
                 'sales_end_at' => $validated['sales_end_at'] ?? $validated['starts_at'],
             ]);
-            $performance->seats()->createMany($hall->seats->map(fn ($seat): array => ['seat_id' => $seat->id, 'price' => $validated['default_price']])->all());
+            $performance->seats()->createMany($hall->seats->map(fn ($seat): array => [
+                'seat_id' => $seat->id,
+                'price' => $seat->default_price ?? $validated['default_price'],
+            ])->all());
         });
 
         return back()->with('success', 'سانس و موجودی صندلی‌های آن ساخته شد.');

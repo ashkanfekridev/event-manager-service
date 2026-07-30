@@ -32,12 +32,12 @@ class CreatePerformance extends CreateRecord
             Seat::query()
                 ->where('hall_id', $performance->hall_id)
                 ->where('is_active', true)
-                ->select('id')
+                ->select(['id', 'default_price'])
                 ->chunkById(500, function ($seats) use ($defaultPrice, $performance, $timestamp): void {
                     PerformanceSeat::query()->insert($seats->map(fn (Seat $seat): array => [
                         'performance_id' => $performance->id,
                         'seat_id' => $seat->id,
-                        'price' => $defaultPrice,
+                        'price' => $seat->default_price ?? $defaultPrice,
                         'status' => 'available',
                         'created_at' => $timestamp,
                         'updated_at' => $timestamp,

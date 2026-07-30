@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['hall_id', 'section', 'row_label', 'number', 'code', 'type', 'is_active', 'aisle_after'])]
+#[Fillable(['hall_id', 'section', 'row_label', 'number', 'code', 'type', 'is_active', 'aisle_after', 'aisle_after_row', 'default_price'])]
 class Seat extends Model
 {
     /** @use HasFactory<SeatFactory> */
@@ -26,6 +26,8 @@ class Seat extends Model
         return [
             'is_active' => 'boolean',
             'aisle_after' => 'boolean',
+            'aisle_after_row' => 'boolean',
+            'default_price' => 'decimal:2',
         ];
     }
 

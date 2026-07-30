@@ -21,7 +21,7 @@ class PerformanceForm
                     DateTimePicker::make('sales_start_at')->label('شروع فروش')->beforeOrEqual('starts_at')->seconds(false)->native(false),
                     DateTimePicker::make('sales_end_at')->label('پایان فروش')->seconds(false)->native(false)->beforeOrEqual('starts_at'),
                     Select::make('status')->label('وضعیت')->options(['scheduled' => 'برنامه‌ریزی‌شده', 'cancelled' => 'لغوشده', 'completed' => 'برگزارشده'])->default('scheduled')->required(),
-                    TextInput::make('default_price')->label('قیمت پایه')->numeric()->minValue(0)->suffix('تومان')->required()->visibleOn('create')->helperText('این قیمت برای موجودی تمام صندلی‌های فعال سالن ثبت می‌شود.'),
+                    TextInput::make('default_price')->label('قیمت پایه')->numeric()->minValue(0)->suffix('تومان')->required()->visibleOn('create')->helperText('برای صندلی‌هایی استفاده می‌شود که در چیدمان سالن قیمت اختصاصی ندارند.'),
                 ])->columns(2),
             ]);
     }

@@ -7,13 +7,17 @@ use App\Filament\Resources\Halls\RelationManagers\SeatsRelationManager;
 use App\Filament\Resources\Performances\Pages\CreatePerformance;
 use App\Models\Event;
 use App\Models\Hall;
+use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Performance;
 use App\Models\PerformanceSeat;
 use App\Models\Seat;
+use App\Models\Ticket;
 use App\Models\User;
 use App\Models\Venue;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\URL;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
@@ -138,7 +142,10 @@ test('a customer can reserve available seats and confirm the order', function ()
     $this->get($confirmation->json('data.ticket_url'))
         ->assertOk()
         ->assertSee('خرید شما با موفقیت انجام شد')
-        ->assertSee('main-A-1');
+        ->assertSee('main-A-1')
+        ->assertSee('ticket-document', false)
+        ->assertSee('نکات مهم ورود')
+        ->assertSee('چاپ / ذخیره PDF');
 
     $this->actingAs(User::factory()->admin()->create());
     $this->get(route('filament.admin.resources.orders.index'))->assertOk()->assertSee('Ali Ahmadi')->assertSee('09120000000');
@@ -161,6 +168,34 @@ test('reservation response explains when ticket sales will open', function () {
     ])->assertUnprocessable()->assertJsonValidationErrorFor('performance');
 });
 
+test('all purchased seats are printed on one ticket page', function () {
+    $venue = Venue::factory()->create();
+    $hall = Hall::factory()->for($venue)->create();
+    $event = Event::factory()->create();
+    $performance = Performance::factory()->for($event)->for($hall)->create();
+    $order = Order::factory()->create(['status' => 'paid', 'total_amount' => 300000]);
+
+    foreach ([['A', '1'], ['A', '2']] as [$row, $number]) {
+        $seat = Seat::factory()->for($hall)->create([
+            'row_label' => $row,
+            'number' => $number,
+            'code' => "main-{$row}-{$number}",
+        ]);
+        $performanceSeat = PerformanceSeat::factory()->for($performance)->for($seat)->create();
+        $orderItem = OrderItem::factory()->for($order)->for($performanceSeat)->create(['unit_price' => 150000]);
+
+        Ticket::factory()->for($orderItem)->create();
+    }
+
+    $response = $this->get(URL::temporarySignedRoute('tickets.show', now()->addMinute(), $order))
+        ->assertOk()
+        ->assertSee('صندلی‌های خریداری‌شده')
+        ->assertSee('main-A-1')
+        ->assertSee('main-A-2');
+
+    expect(substr_count($response->getContent(), 'class="ticket-document"'))->toBe(1);
+});
+
 test('customers can browse published events', function () {
     $event = Event::factory()->create(['title' => 'Hamlet']);
     $performance = Performance::factory()->for($event)->create();
@@ -168,6 +203,31 @@ test('customers can browse published events', function () {
     $this->get(route('events.index'))->assertOk()->assertSee('Hamlet');
     $this->get(route('events.show', $event))->assertOk()->assertSee($performance->starts_at->format('Y/m/d'));
     $this->get(route('checkout.show', $performance))->assertOk()->assertSee('اطلاعات خریدار');
+});
+
+test('public pages use the local Vazirmatn font', function () {
+    expect(public_path('fonts/Vazirmatn.woff2'))->toBeFile()
+        ->and(file_get_contents(public_path('css/site.css')))
+        ->toContain("src: url('../fonts/Vazirmatn.woff2') format('woff2')")
+        ->toContain('font-family: var(--font-family)');
+});
+
+test('customers can search and filter published events', function () {
+    $theater = Event::factory()->create(['title' => 'Hamlet', 'type' => 'theater']);
+    $concert = Event::factory()->create(['title' => 'Shajarian Concert', 'type' => 'concert']);
+
+    Performance::factory()->for($theater)->create();
+    Performance::factory()->for($concert)->create();
+
+    $this->get(route('events.index', ['q' => 'Hamlet']))
+        ->assertOk()
+        ->assertSee('Hamlet')
+        ->assertDontSee('Shajarian Concert');
+
+    $this->get(route('events.index', ['type' => 'concert']))
+        ->assertOk()
+        ->assertSee('Shajarian Concert')
+        ->assertDontSee('Hamlet');
 });
 
 test('customers can switch hall sections and see seats arranged by row with aisles', function () {
@@ -181,6 +241,7 @@ test('customers can switch hall sections and see seats arranged by row with aisl
         'number' => '1',
         'code' => 'main-A-1',
         'aisle_after' => true,
+        'aisle_after_row' => true,
     ]);
     $vipSeat = Seat::factory()->for($hall)->create([
         'section' => 'VIP',
@@ -198,7 +259,10 @@ test('customers can switch hall sections and see seats arranged by row with aisl
         ->assertSee('data-section-target="VIP"', false)
         ->assertSee('ردیف A')
         ->assertSee('ردیف B')
-        ->assertSee('aisle-after', false);
+        ->assertSee('seat-map-scroll', false)
+        ->assertSee('seat-selection-bar', false)
+        ->assertSee('aisle-after', false)
+        ->assertSee('aisle-after-row', false);
 });
 
 test('an admin can edit and immediately toggle event publication', function () {

@@ -3,44 +3,117 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#111827">
     <title>@yield('title', 'رویدادینو')</title>
-    <style>
-        :root{--ink:#17202a;--muted:#667085;--brand:#7c3aed;--brand2:#ec4899;--bg:#f7f5ff;--card:#fff;--line:#e8e3f3;--ok:#087f5b;--danger:#c92a2a;--warning:#b45309}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Tahoma,Arial,sans-serif;line-height:1.7}a{color:inherit;text-decoration:none}.container{width:min(1120px,calc(100% - 32px));margin:auto}.nav{background:#171126;color:#fff;padding:14px 0;position:sticky;top:0;z-index:10}.nav .container{display:flex;align-items:center;justify-content:space-between}.brand{font-size:21px;font-weight:800}.nav-links{display:flex;gap:10px}.nav-links a{padding:7px 12px;border-radius:9px}.nav-links a:hover{background:#ffffff18}.hero{padding:55px 0 34px;background:linear-gradient(135deg,#21133b,#7c3aed 65%,#ec4899);color:#fff}.hero h1{font-size:clamp(28px,5vw,52px);margin:0 0 8px}.hero p{margin:0;color:#eee2ff}.content{padding:32px 0 60px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 8px 24px #4320800b}.card h2,.card h3{margin-top:0}.muted{color:var(--muted)}.badge{display:inline-block;padding:3px 9px;border-radius:99px;background:#ede9fe;color:#5b21b6;font-size:13px}.badge.published{background:#d1fae5;color:#047857}.badge.scheduled{background:#fef3c7;color:#92400e}.badge.draft{background:#f1f5f9;color:#475569}.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:10px;padding:10px 16px;background:var(--brand);color:#fff;cursor:pointer;font:inherit}.btn.small{padding:6px 10px;font-size:13px}.btn.secondary{background:#efeafd;color:#5b21b6}.btn.success{background:var(--ok)}.btn.danger{background:var(--danger)}.btn:disabled{opacity:.5;cursor:not-allowed}.button-row{display:flex;flex-wrap:wrap;gap:8px}.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}.field{display:flex;flex-direction:column;gap:5px}.field>span{font-size:14px;font-weight:700}.field.full{grid-column:1/-1}input,select,textarea{width:100%;border:1px solid #d8d0e7;border-radius:9px;padding:10px;background:#fff;font:inherit}input:focus,select:focus,textarea:focus{outline:3px solid #7c3aed18;border-color:var(--brand)}textarea{min-height:100px}.alert{border-radius:10px;padding:12px 15px;margin-bottom:18px;background:#d3f9d8;color:#166534}.alert.error{background:#ffe3e3;color:#9b1c1c}.table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse}.table th,.table td{text-align:right;padding:12px;border-bottom:1px solid var(--line);white-space:nowrap}.table th{font-size:13px;color:var(--muted);background:#faf9fd}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.stat strong{display:block;font-size:28px;color:var(--brand)}.seat-map{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0}.section-picker{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0}.section-button{border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);padding:8px 16px;cursor:pointer;font:inherit}.section-button.active{border-color:var(--brand);background:#ede9fe;color:#5b21b6;font-weight:700}.seat-section{margin:20px 0;overflow:hidden}.seat-section[hidden]{display:none}.seat-row{display:grid;grid-template-columns:80px minmax(0,1fr);align-items:center;gap:12px;margin-bottom:12px}.seat-row-label{color:var(--muted);font-size:13px}.seat-row-seats{display:flex;direction:ltr;gap:8px;overflow-x:auto;padding:4px 4px 10px}.seat{flex:0 0 40px;border:1px solid #c9bde1;background:#fff;border-radius:8px;padding:7px 5px;cursor:pointer}.seat.aisle-after{margin-right:34px}.seat.selected{background:var(--brand);color:#fff}.seat:disabled{background:#eee;color:#999;cursor:not-allowed}.seat-legend{display:flex;flex-wrap:wrap;gap:18px;margin:18px 0;color:var(--muted);font-size:13px}.seat-legend span{display:flex;align-items:center;gap:6px}.seat-sample{width:18px;height:18px;border:1px solid #c9bde1;border-radius:5px;background:#fff}.seat-sample.selected{background:var(--brand)}.seat-sample.unavailable{background:#eee}.screen{text-align:center;background:#2d2640;color:#fff;border-radius:50% 50% 8px 8px;padding:7px;margin:12px auto 25px;max-width:420px}.section-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}.admin-shell{min-height:100vh;display:grid;grid-template-columns:260px 1fr}.admin-sidebar{position:sticky;top:0;height:100vh;background:#181126;color:#fff;padding:24px 16px}.admin-sidebar .brand{display:block;padding:0 12px 25px}.admin-sidebar small{display:block;color:#a99fbd;padding:10px 12px}.admin-menu{display:grid;gap:5px}.admin-menu a{padding:10px 12px;border-radius:10px;color:#ddd5ec}.admin-menu a:hover,.admin-menu a.active{background:#7c3aed;color:#fff}.admin-main{min-width:0}.admin-topbar{height:72px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px}.admin-profile{display:flex;align-items:center;gap:10px}.avatar{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:#ede9fe;color:#6d28d9;font-weight:800}.admin-content{padding:28px;max-width:1400px}.filter-bar{display:flex;flex-wrap:wrap;gap:10px}.filter-bar input{min-width:240px}.filter-bar select{width:auto;min-width:140px}.publication-options{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.publication-option{border:1px solid var(--line);padding:12px;border-radius:10px}.publication-option input{width:auto}.page-subtitle{margin-top:-12px;color:var(--muted)}@media(max-width:850px){.admin-shell{display:block}.admin-sidebar{position:static;height:auto}.admin-menu{grid-template-columns:repeat(3,1fr)}.admin-sidebar small{display:none}.admin-topbar{padding:0 16px}.admin-content{padding:18px}.stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr)}.nav .container{align-items:flex-start;gap:8px}.nav-links{font-size:13px}.table{font-size:13px}.publication-options{grid-template-columns:1fr}.admin-menu{grid-template-columns:1fr 1fr}.section-title{align-items:flex-start;flex-direction:column}.seat-row{grid-template-columns:1fr}.seat-row-label{font-weight:700}.seat.aisle-after{margin-right:24px}}
-        .purchase-steps{display:flex;align-items:center;justify-content:center;margin-bottom:28px}.purchase-step{display:flex;align-items:center;gap:8px;color:var(--muted)}.purchase-step:not(:last-child):after{content:'';display:block;width:70px;height:2px;background:var(--line);margin:0 14px}.purchase-step span{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#e9e5f2}.purchase-step.active{color:var(--brand);font-weight:700}.purchase-step.active span,.purchase-step.done span{background:var(--brand);color:#fff}.checkout-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px}.checkout-summary{position:sticky;top:20px;align-self:start}.summary-line{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)}.ticket-card{position:relative;border:1px dashed #a78bfa;border-radius:16px;background:linear-gradient(135deg,#fff,#f5f3ff);padding:22px;overflow:hidden}.ticket-card:before,.ticket-card:after{content:'';position:absolute;top:50%;width:24px;height:24px;border-radius:50%;background:var(--bg)}.ticket-card:before{right:-13px}.ticket-card:after{left:-13px}.ticket-code{font-family:monospace;direction:ltr;display:inline-block;background:#171126;color:#fff;padding:8px 12px;border-radius:8px;letter-spacing:1px}.status-box{text-align:center;padding:25px}.empty-state{text-align:center;padding:50px 20px}.event-meta{display:flex;flex-wrap:wrap;gap:12px;color:var(--muted)}@media(max-width:800px){.checkout-grid{grid-template-columns:1fr}.checkout-summary{position:static}.purchase-step:not(:last-child):after{width:22px;margin:0 7px}.purchase-step strong{display:none}}
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/site.css') }}">
+    @stack('head')
 </head>
-<body>
-@if(request()->routeIs('admin.*'))
-<div class="admin-shell">
-    <aside class="admin-sidebar">
-        <a class="brand" href="{{ route('admin.dashboard') }}">رویدادینو <span class="muted" style="font-size:12px">مدیریت</span></a>
-        <small>منوی اصلی</small>
-        <nav class="admin-menu">
-            <a class="{{ request()->routeIs('filament.admin.pages.dashboard') ? 'active' : '' }}" href="{{ route('filament.admin.pages.dashboard') }}">▦ داشبورد</a>
-            <a class="{{ request()->routeIs('admin.events.*') || request()->routeIs('admin.performances.*') ? 'active' : '' }}" href="{{ route('admin.events.index') }}">◈ رویدادها</a>
-            <a class="{{ request()->routeIs('admin.orders.*') ? 'active' : '' }}" href="{{ route('admin.orders.index') }}">◎ سفارش‌ها</a>
-            <a class="{{ request()->routeIs('admin.venues.*') || request()->routeIs('admin.halls.*') || request()->routeIs('admin.seats.*') ? 'active' : '' }}" href="{{ route('admin.venues.index') }}">▤ سالن‌ها</a>
-            <a href="{{ route('events.index') }}" target="_blank">↗ مشاهده سایت</a>
-        </nav>
-    </aside>
-    <div class="admin-main">
-        <header class="admin-topbar"><div class="muted">@yield('title', 'پنل مدیریت')</div><div class="admin-profile"><div><strong>مدیر سیستم</strong><small class="muted" style="display:block">Administrator</small></div><span class="avatar">م</span></div></header>
-        <main class="admin-content">
-            @if(session('success'))<div class="alert">{{ session('success') }}</div>@endif
-            @if($errors->any())<div class="alert error"><ul>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>@endif
-            @yield('content')
-        </main>
+<body @class(['admin-body' => request()->routeIs('admin.*'), 'site-body' => ! request()->routeIs('admin.*')])>
+@if (request()->routeIs('admin.*'))
+    <div class="admin-shell">
+        <aside class="admin-sidebar">
+            <a class="brand" href="{{ route('admin.dashboard') }}">رویدادینو <span class="admin-brand-caption">مدیریت</span></a>
+            <small>منوی اصلی</small>
+            <nav class="admin-menu">
+                <a class="{{ request()->routeIs('filament.admin.pages.dashboard') ? 'active' : '' }}" href="{{ route('filament.admin.pages.dashboard') }}">▦ داشبورد</a>
+                <a class="{{ request()->routeIs('admin.events.*') || request()->routeIs('admin.performances.*') ? 'active' : '' }}" href="{{ route('admin.events.index') }}">◈ رویدادها</a>
+                <a class="{{ request()->routeIs('admin.orders.*') ? 'active' : '' }}" href="{{ route('admin.orders.index') }}">◎ سفارش‌ها</a>
+                <a class="{{ request()->routeIs('admin.venues.*') || request()->routeIs('admin.halls.*') || request()->routeIs('admin.seats.*') ? 'active' : '' }}" href="{{ route('admin.venues.index') }}">▤ سالن‌ها</a>
+                <a href="{{ route('events.index') }}" target="_blank">↗ مشاهده سایت</a>
+            </nav>
+        </aside>
+        <div class="admin-main">
+            <header class="admin-topbar">
+                <div class="muted">@yield('title', 'پنل مدیریت')</div>
+                <div class="admin-profile"><div><strong>مدیر سیستم</strong><small class="muted">Administrator</small></div><span class="avatar">م</span></div>
+            </header>
+            <main class="admin-content">
+                @if (session('success'))
+                    <div class="alert">{{ session('success') }}</div>
+                @endif
+                @if ($errors->any())
+                    <div class="alert error"><ul>@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>
+                @endif
+                @yield('content')
+            </main>
+        </div>
     </div>
-</div>
 @else
-<nav class="nav"><div class="container"><a class="brand" href="{{ route('events.index') }}">رویدادینو</a><div class="nav-links"><a href="{{ route('events.index') }}">رویدادها</a><a href="{{ route('tickets.index') }}">بلیت‌های من</a><a href="{{ route('filament.admin.pages.dashboard') }}">پنل مدیریت</a></div></div></nav>
-@hasSection('hero')<section class="hero"><div class="container">@yield('hero')</div></section>@endif
-<main class="content"><div class="container">
-    @if(session('success'))<div class="alert">{{ session('success') }}</div>@endif
-    @if($errors->any())<div class="alert error"><ul>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>@endif
-    @yield('content')
-</div></main>
+    <header class="site-header">
+        <div class="site-header__bar">
+            <div class="container site-header__inner">
+                <a class="site-logo" href="{{ route('events.index') }}" aria-label="رویدادینو، صفحه اصلی">
+                    <span class="site-logo__mark"><i></i><i></i><i></i></span>
+                    <span><strong>رویدادینو</strong><small>تجربه زنده هنر</small></span>
+                </a>
+
+                <button class="site-menu-toggle" type="button" aria-label="باز کردن منو" aria-expanded="false" data-menu-toggle>
+                    <span></span><span></span><span></span>
+                </button>
+
+                <nav class="site-nav" data-site-nav>
+                    <a @class(['active' => request()->routeIs('events.*')]) href="{{ route('events.index') }}">برنامه‌ها</a>
+                    <a @class(['active' => request()->routeIs('tickets.*')]) href="{{ route('tickets.index') }}">پیگیری خرید</a>
+                    <a href="{{ route('events.index', ['type' => 'concert']) }}">کنسرت‌ها</a>
+                    <a href="{{ route('events.index', ['type' => 'theater']) }}">نمایش‌ها</a>
+                </nav>
+
+                <div class="site-header__actions">
+                    <a class="header-track-link" href="{{ route('tickets.index') }}"><span>◎</span> بلیت‌های من</a>
+                    <a class="header-admin-link" href="{{ route('filament.admin.pages.dashboard') }}">ورود مدیر</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    @hasSection('hero')
+        <section class="site-hero"><div class="container">@yield('hero')</div></section>
+    @endif
+
+    <main class="site-main">
+        <div class="container">
+            @if (session('success'))
+                <div class="alert">{{ session('success') }}</div>
+            @endif
+            @if ($errors->any())
+                <div class="alert error"><ul>@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>
+            @endif
+            @yield('content')
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container site-footer__grid">
+            <div class="site-footer__about">
+                <a class="site-logo site-logo--footer" href="{{ route('events.index') }}">
+                    <span class="site-logo__mark"><i></i><i></i><i></i></span>
+                    <span><strong>رویدادینو</strong><small>تجربه زنده هنر</small></span>
+                </a>
+                <p>مرجع ساده و امن برای پیدا کردن رویدادهای هنری، انتخاب صندلی و دریافت آنلاین بلیت.</p>
+            </div>
+            <div>
+                <h3>رویدادها</h3>
+                <a href="{{ route('events.index') }}">همه برنامه‌ها</a>
+                <a href="{{ route('events.index', ['type' => 'concert']) }}">کنسرت‌ها</a>
+                <a href="{{ route('events.index', ['type' => 'theater']) }}">نمایش‌ها</a>
+            </div>
+            <div>
+                <h3>راهنمای خرید</h3>
+                <a href="{{ route('tickets.index') }}">پیگیری سفارش</a>
+                <a href="{{ route('tickets.index') }}">دریافت دوباره بلیت</a>
+                <a href="{{ route('filament.admin.pages.dashboard') }}">پنل برگزارکنندگان</a>
+            </div>
+            <div>
+                <h3>پشتیبانی</h3>
+                <p>هر روز از ساعت ۹ تا ۲۱</p>
+                <a class="site-footer__contact" href="mailto:support@example.com">support@example.com</a>
+            </div>
+        </div>
+        <div class="container site-footer__bottom"><span>© {{ now()->year }} رویدادینو</span><span>خرید امن، انتخاب صندلی، دریافت آنی بلیت</span></div>
+    </footer>
 @endif
+
+<script src="{{ asset('js/site.js') }}" defer></script>
 @stack('scripts')
 </body>
 </html>
