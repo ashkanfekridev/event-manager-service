@@ -16,7 +16,7 @@
         <a class="brand" href="{{ route('admin.dashboard') }}">رویدادینو <span class="muted" style="font-size:12px">مدیریت</span></a>
         <small>منوی اصلی</small>
         <nav class="admin-menu">
-            <a class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">▦ داشبورد</a>
+            <a class="{{ request()->routeIs('filament.admin.pages.dashboard') ? 'active' : '' }}" href="{{ route('filament.admin.pages.dashboard') }}">▦ داشبورد</a>
             <a class="{{ request()->routeIs('admin.events.*') || request()->routeIs('admin.performances.*') ? 'active' : '' }}" href="{{ route('admin.events.index') }}">◈ رویدادها</a>
             <a class="{{ request()->routeIs('admin.orders.*') ? 'active' : '' }}" href="{{ route('admin.orders.index') }}">◎ سفارش‌ها</a>
             <a class="{{ request()->routeIs('admin.venues.*') || request()->routeIs('admin.halls.*') || request()->routeIs('admin.seats.*') ? 'active' : '' }}" href="{{ route('admin.venues.index') }}">▤ سالن‌ها</a>
@@ -33,7 +33,7 @@
     </div>
 </div>
 @else
-<nav class="nav"><div class="container"><a class="brand" href="{{ route('events.index') }}">رویدادینو</a><div class="nav-links"><a href="{{ route('events.index') }}">رویدادها</a><a href="{{ route('tickets.index') }}">بلیت‌های من</a><a href="{{ route('admin.dashboard') }}">پنل مدیریت</a></div></div></nav>
+<nav class="nav"><div class="container"><a class="brand" href="{{ route('events.index') }}">رویدادینو</a><div class="nav-links"><a href="{{ route('events.index') }}">رویدادها</a><a href="{{ route('tickets.index') }}">بلیت‌های من</a><a href="{{ route('filament.admin.pages.dashboard') }}">پنل مدیریت</a></div></div></nav>
 @hasSection('hero')<section class="hero"><div class="container">@yield('hero')</div></section>@endif
 <main class="content"><div class="container">
     @if(session('success'))<div class="alert">{{ session('success') }}</div>@endif
