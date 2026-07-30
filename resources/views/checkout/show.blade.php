@@ -6,8 +6,34 @@
 <div class="checkout-grid">
     <section class="card">
         <div id="step-1">
-            <h2>صندلی‌های خود را انتخاب کنید</h2><p class="muted">حداکثر ۱۰ صندلی در هر سفارش قابل انتخاب است.</p><div class="screen">صحنه</div>
-            <div class="seat-map">@foreach($performance->seats->sortBy(fn($item) => [$item->seat->row_label, (int) $item->seat->number]) as $performanceSeat)@php($available=$performanceSeat->status==='available'||($performanceSeat->status==='reserved'&&$performanceSeat->reserved_until?->isPast()))<button type="button" class="seat" data-seat="{{ $performanceSeat->id }}" data-label="{{ $performanceSeat->seat->row_label }}-{{ $performanceSeat->seat->number }}" data-price="{{ $performanceSeat->price }}" {{ $available ? '' : 'disabled' }}>{{ $performanceSeat->seat->row_label }}-{{ $performanceSeat->seat->number }}</button>@endforeach</div>
+            <h2>صندلی‌های خود را انتخاب کنید</h2><p class="muted">ابتدا بخش سالن را انتخاب کنید. حداکثر ۱۰ صندلی در هر سفارش قابل انتخاب است.</p>
+            @if($seatSections->isNotEmpty())
+                <div class="section-picker" role="tablist" aria-label="بخش‌های سالن">
+                    @foreach($seatSections as $section => $rows)
+                        <button type="button" class="section-button {{ $loop->first ? 'active' : '' }}" data-section-target="{{ $section }}" aria-selected="{{ $loop->first ? 'true' : 'false' }}">{{ $section }}</button>
+                    @endforeach
+                </div>
+                <div class="screen">صحنه</div>
+                @foreach($seatSections as $section => $rows)
+                    <div class="seat-section" data-seat-section="{{ $section }}" {{ $loop->first ? '' : 'hidden' }}>
+                        <h3>{{ $section }}</h3>
+                        @foreach($rows as $rowLabel => $rowSeats)
+                            <div class="seat-row">
+                                <span class="seat-row-label">ردیف {{ $rowLabel }}</span>
+                                <div class="seat-row-seats">
+                                    @foreach($rowSeats as $performanceSeat)
+                                        @php($available = $performanceSeat->status === 'available' || ($performanceSeat->status === 'reserved' && $performanceSeat->reserved_until?->isPast()))
+                                        <button type="button" class="seat {{ $performanceSeat->seat->aisle_after ? 'aisle-after' : '' }}" data-seat="{{ $performanceSeat->id }}" data-label="{{ $section }} / {{ $rowLabel }}-{{ $performanceSeat->seat->number }}" data-price="{{ $performanceSeat->price }}" {{ $available ? '' : 'disabled' }} aria-label="بخش {{ $section }}، ردیف {{ $rowLabel }}، صندلی {{ $performanceSeat->seat->number }}">{{ $performanceSeat->seat->number }}</button>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endforeach
+                <div class="seat-legend"><span><i class="seat-sample available"></i> آزاد</span><span><i class="seat-sample selected"></i> انتخاب شما</span><span><i class="seat-sample unavailable"></i> فروخته‌شده</span></div>
+            @else
+                <div class="empty-state"><p>هنوز صندلی‌ای برای این سانس تعریف نشده است.</p></div>
+            @endif
             <div class="button-row"><button id="to-customer" class="btn" disabled>ادامه و ثبت اطلاعات</button></div>
         </div>
         <form id="step-2" style="display:none">
@@ -23,6 +49,7 @@
 @push('scripts')
 <script>
 const selected=new Map();const buttons=document.querySelectorAll('.seat:not(:disabled)');const nextButton=document.getElementById('to-customer');const labels=document.getElementById('selected-labels');const count=document.getElementById('selected-count');const total=document.getElementById('selected-total');
+const sectionButtons=document.querySelectorAll('[data-section-target]');const seatSections=document.querySelectorAll('[data-seat-section]');sectionButtons.forEach(button=>button.addEventListener('click',()=>{sectionButtons.forEach(item=>{const isActive=item===button;item.classList.toggle('active',isActive);item.setAttribute('aria-selected',isActive?'true':'false')});seatSections.forEach(section=>{section.hidden=section.dataset.seatSection!==button.dataset.sectionTarget})}));
 function syncSummary(){labels.textContent=selected.size?[...selected.values()].map(item=>item.label).join('، '):'انتخاب نشده';count.textContent=selected.size.toLocaleString('fa-IR');total.textContent=[...selected.values()].reduce((sum,item)=>sum+item.price,0).toLocaleString('fa-IR');nextButton.disabled=!selected.size;}
 buttons.forEach(button=>button.addEventListener('click',()=>{const id=Number(button.dataset.seat);if(selected.has(id)){selected.delete(id);button.classList.remove('selected')}else if(selected.size<10){selected.set(id,{label:button.dataset.label,price:Number(button.dataset.price)});button.classList.add('selected')}syncSummary()}));
 function showStep(step){[1,2,3].forEach(number=>{document.getElementById(`step-${number}`).style.display=number===step?(number===2?'block':'block'):'none';const indicator=document.querySelector(`[data-step-indicator="${number}"]`);indicator.classList.toggle('active',number===step);indicator.classList.toggle('done',number<step)})}
