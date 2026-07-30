@@ -12,6 +12,7 @@ services:
       APP_DEBUG: "true"
       APP_URL: "http://localhost:${APP_PORT:-8000}"
       APP_TIMEZONE: "${APP_TIMEZONE:-Asia/Tehran}"
+      APP_LOCALE: "${APP_LOCALE:-fa}"
       DB_CONNECTION: mysql
       DB_HOST: mysql
       DB_PORT: 3306
