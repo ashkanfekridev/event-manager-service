@@ -44,6 +44,7 @@ class PerformanceResource extends JsonResource
                     'number' => $performanceSeat->seat->number,
                     'code' => $performanceSeat->seat->code,
                     'type' => $performanceSeat->seat->type,
+                    'aisle_after' => $performanceSeat->seat->aisle_after,
                 ],
             ])),
         ];
